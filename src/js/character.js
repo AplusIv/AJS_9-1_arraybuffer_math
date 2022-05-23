@@ -1,26 +1,32 @@
 export default class Character {
-  constructor(attack, distance) {
-    this.attack = attack;
-    this.distance = distance;
+  constructor() {
+    this.distance = 1; // по умолчанию атака ближайшей клетки
+    this.stoned = false; // по умолчанию дурман отсутствует
   }
 
   set attack(attack) {
-    if (this.distance >= 1) {
-      this._attack = Math.round(attack * (1.1 - this.distance * 0.1));
-      // ??? линтер ругается на подчеркивание в свойстве. Как быть?
-    }
+    this.baseAttack = attack;
   }
 
   get attack() {
-    return this._attack;
+    this.reducedAttack = Math.round(this.baseAttack * (1.1 - this.distance * 0.1));
+    // Общая формула для любой дистанции
+
+    if (this.distance > 1 && !this.stoned) {
+      return this.reducedAttack;
+    } if (this.distance > 1 && this.stoned) {
+      this.reducedAttack = Math.round(this.reducedAttack - Math.log2(this.distance) * 5);
+      return this.reducedAttack;
+    }
+
+    return this.baseAttack;
   }
 
-  set stoned(attack) {
-    this.attack = attack;
-    this._attack = Math.round(this.attack - Math.log2(this.distance) * 5);
+  set stoned(status) {
+    this.stonedStatus = status;
   }
 
   get stoned() {
-    return this._attack;
+    return this.stonedStatus;
   }
 }
